@@ -4,7 +4,7 @@
 #include <cmath>
 #include <string>
 
-int massive[100];
+int massive[100];//, value;
 
 int sc_memoryInit();
 
@@ -19,7 +19,8 @@ int sc_memoryLoad(char *filename);
 int main(void)
 {
 	system("clear");
-	int adress,value;
+	int adress, value;
+	char* File = "file.bin";
 	sc_memoryInit();
 	std::cout << "Input ur adress: ";
 	std::cin >> adress;
@@ -31,6 +32,8 @@ int main(void)
 		std::cout << "Array[" << adress << "] = " << track_set << "\n";
 		std::cout << "Array[" << adress << "] has cell of memory: " << track_get << "\n";
 	}
+	sc_memorySave(&*File);
+	sc_memoryLoad(&*File);
 	system("pause");
 	return 0;
 }
@@ -74,10 +77,19 @@ int sc_memoryGet(int adress, int *value)
 
 int sc_memorySave(char *filename)
 {
-	//
+	std::ofstream fileStrmOut(filename, std::ios::binary );
+    fileStrmOut.write( ( char* ) &massive, sizeof(int) );
+    fileStrmOut.close();
 }
 
 int sc_memoryLoad(char *filename)
 {
-	//
+    std::ifstream fileStrmIn(filename, std::ios::binary );
+    while (fileStrmIn.read((char *) &massive, sizeof(int)))
+    {
+    	for(auto i = 0; i < 100; i++)
+        std::cout <<"Array[" << i << "] = " << massive[i] << " ";
+    }
+    std::cout << "\n";
+    fileStrmIn.close();
 }
