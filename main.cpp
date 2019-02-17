@@ -6,7 +6,11 @@
 
 int massive[100];//, value;
 
-int sc_memoryInit();
+int *value;
+
+int registr; //registr = registr & (~(1 << (k – 1)));
+
+int sc_memoryInit(void);
 
 int sc_memorySet(int adress, int value);
 
@@ -16,29 +20,37 @@ int sc_memorySave(char *filename);
 
 int sc_memoryLoad(char *filename);
 
+int sc_regInit(void);
+
+int sc_regSet(int register, int value);
+
+int sc_regGet(int register, int *value);
+
 int main(void)
 {
 	system("clear");
 	int adress, value;
-	char* File = "file.bin";
+	char* File = "file.bin"; // pojiloi warning
 	sc_memoryInit();
 	std::cout << "Input ur adress: ";
 	std::cin >> adress;
 	std::cout << std::endl;
-	int track_set = sc_memorySet(adress, value); // = value
-	int track_get = sc_memoryGet(adress, &value); // = *value
-	if(track_set != -1)
+	int memorySet = sc_memorySet(adress, value); // = value
+	int memoryGet = sc_memoryGet(adress, &value); // = *value
+	if(memorySet != -1 && memoryGet != -1)
 	{
-		std::cout << "Array[" << adress << "] = " << track_set << "\n";
-		std::cout << "Array[" << adress << "] has cell of memory: " << track_get << "\n";
+		std::cout << "Array[" << adress << "] = " << memorySet << "\n";
+		std::cout << "Array[" << adress << "] has cell of memory: " << &value << "\n";
 	}
 	sc_memorySave(&*File);
-	sc_memoryLoad(&*File);
+	int memoryLoad = sc_memoryLoad(&*File);
+	//if (memoryLoad != -1)
+	registr = sc_regInit();
 	system("pause");
 	return 0;
 }
 
-int sc_memoryInit()
+int sc_memoryInit(void)
 {
 	for(auto i = 0; i < 100; i++)
 		massive[i] = 0;
@@ -62,7 +74,6 @@ int sc_memorySet(int adress, int value)
 
 int sc_memoryGet(int adress, int *value)
 {
-	int index;
 	if(adress > 99 || adress < 0)
 	{
 		std::cout << "Wrong number of memeory!(sc_memoryGet)\n";
@@ -70,26 +81,52 @@ int sc_memoryGet(int adress, int *value)
 	}
 	else
 	{
-		index = *value;
-		return index;
+		*value = massive[adress];
+		return *value;
 	}
 }
 
 int sc_memorySave(char *filename)
 {
-	std::ofstream fileStrmOut(filename, std::ios::binary );
-    fileStrmOut.write( ( char* ) &massive, sizeof(int) );
-    fileStrmOut.close();
+	std::ofstream file_open(filename, std::ios::binary);
+    file_open.write((char*) &massive, sizeof(int));
+    file_open.close();
 }
 
 int sc_memoryLoad(char *filename)
 {
-    std::ifstream fileStrmIn(filename, std::ios::binary );
-    while (fileStrmIn.read((char *) &massive, sizeof(int)))
+	int new_massive[100];
+    std::ifstream file_open(filename, std::ios::binary);
+    while(file_open.read((char *) &massive, sizeof(int)))
     {
     	for(auto i = 0; i < 100; i++)
-        std::cout <<"Array[" << i << "] = " << massive[i] << " ";
+        	file_open >> new_massive[i];
     }
+    //else
+    //{
+    //	std::cout << "Can't open binary file\n";
+    //	return -1;
+    //}
+    file_open.close();
+    std::cout << "\n\nBinary vision of massive memory: \n";
+    for(auto i = 0; i < 100; i++)
+    	std::cout << "Array[" << i << "] = " << &new_massive[i] << "\t\t";
     std::cout << "\n";
-    fileStrmIn.close();
+    return 1;
+}
+
+int sc_regInit(void)
+{
+	registr = 0;
+	return 0;
+}
+
+int sc_regSet(int register, int value)
+{
+	//
+}
+
+int sc_regGet(int register, int *value)
+{
+	//
 }
